@@ -1,0 +1,1459 @@
+<!doctype html>
+<html lang="en" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Farm to Table Platform</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <script src="/_sdk/data_sdk.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&amp;family=Crimson+Pro:wght@600;700&amp;display=swap" rel="stylesheet">
+  <style>
+    body {
+      box-sizing: border-box;
+    }
+    
+    .font-display {
+      font-family: 'Crimson Pro', serif;
+    }
+    
+    .font-body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.6; }
+    }
+    
+    .fade-in {
+      animation: fadeIn 0.4s ease-out;
+    }
+    
+    .pulse-anim {
+      animation: pulse 2s ease-in-out infinite;
+    }
+    
+    .glass-effect {
+      backdrop-filter: blur(10px);
+      background: rgba(255, 255, 255, 0.9);
+    }
+    
+    .hover-lift {
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .hover-lift:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    }
+  </style>
+  <style>@view-transition { navigation: auto; }</style>
+ </head>
+ <body class="h-full font-body">
+  <div id="app-wrapper" class="h-full w-full overflow-auto">
+   <div id="app-container" class="min-h-full w-full"><!-- Navigation -->
+    <nav id="main-nav" class="sticky top-0 z-50 glass-effect border-b">
+     <div class="max-w-7xl mx-auto px-6 py-4">
+      <div class="flex items-center justify-between">
+       <div class="flex items-center gap-2"><span class="text-3xl">🌾</span>
+        <h1 id="nav-title" class="font-display text-2xl font-bold"></h1>
+       </div>
+       <div class="flex items-center gap-3"><button id="nav-marketplace" class="nav-btn px-4 py-2 rounded-lg font-medium transition-all">Marketplace</button> <button id="nav-pricing" class="nav-btn px-4 py-2 rounded-lg font-medium transition-all">Pricing</button> <button id="nav-contracts" class="nav-btn px-4 py-2 rounded-lg font-medium transition-all">Contracts</button> <button id="nav-logistics" class="nav-btn px-4 py-2 rounded-lg font-medium transition-all">Logistics</button> <button id="nav-payments" class="nav-btn px-4 py-2 rounded-lg font-medium transition-all">Payments</button>
+       </div>
+      </div>
+     </div>
+    </nav><!-- Hero Section -->
+    <header id="hero-section" class="relative py-20">
+     <div class="max-w-7xl mx-auto px-6 text-center">
+      <h2 id="hero-headline" class="font-display text-6xl font-bold mb-4"></h2>
+      <p id="hero-subtitle" class="text-xl mb-8 opacity-90"></p>
+      <div class="flex justify-center gap-4"><button id="hero-cta-farmer" class="px-8 py-4 rounded-xl font-semibold text-lg shadow-lg hover-lift"> 🌾 Join as Farmer </button> <button id="hero-cta-restaurant" class="px-8 py-4 rounded-xl font-semibold text-lg shadow-lg hover-lift"> 🍽️ Join as Restaurant </button>
+      </div>
+     </div>
+    </header><!-- Main Content Area -->
+    <main class="max-w-7xl mx-auto px-6 pb-20"><!-- MARKETPLACE VIEW -->
+     <div id="view-marketplace" class="view-container">
+      <div class="mb-8">
+       <h3 class="font-display text-4xl font-bold mb-2">Live Marketplace</h3>
+       <p class="text-lg opacity-70">Browse available products from local farmers</p>
+      </div><!-- Filters -->
+      <div class="flex gap-4 mb-6 flex-wrap"><select id="filter-category" class="px-4 py-2 rounded-lg border-2 font-medium"> <option value="all">All Categories</option> <option value="vegetables">Vegetables</option> <option value="fruits">Fruits</option> <option value="grains">Grains</option> <option value="dairy">Dairy</option> <option value="eggs">Eggs</option> </select> <input type="text" id="filter-location" placeholder="Filter by location..." class="px-4 py-2 rounded-lg border-2 flex-1 min-w-[200px]"> <button id="btn-add-listing" class="px-6 py-2 rounded-lg font-semibold shadow-md hover-lift">+ Add Listing</button>
+      </div><!-- Listings Grid -->
+      <div id="marketplace-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"><!-- Dynamic listings -->
+      </div><!-- Empty State -->
+      <div id="marketplace-empty" class="hidden text-center py-16">
+       <div class="text-6xl mb-4">
+        🌱
+       </div>
+       <p class="text-xl opacity-60">No listings yet. Be the first to add your products!</p>
+      </div>
+     </div><!-- PRICING VIEW -->
+     <div id="view-pricing" class="view-container hidden">
+      <div class="mb-8">
+       <h3 class="font-display text-4xl font-bold mb-2">Real-Time Price Dashboard</h3>
+       <p class="text-lg opacity-70">Live market pricing and trends</p>
+      </div><!-- Price Stats -->
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+       <div class="stat-card p-6 rounded-xl shadow-md">
+        <div class="text-3xl mb-2">
+         📊
+        </div>
+        <div class="text-sm opacity-70 mb-1">
+         Avg Market Price
+        </div>
+        <div id="stat-avg-price" class="text-2xl font-bold">
+         $0.00
+        </div>
+       </div>
+       <div class="stat-card p-6 rounded-xl shadow-md">
+        <div class="text-3xl mb-2">
+         📈
+        </div>
+        <div class="text-sm opacity-70 mb-1">
+         Price Trend
+        </div>
+        <div id="stat-trend" class="text-2xl font-bold">
+         +0%
+        </div>
+       </div>
+       <div class="stat-card p-6 rounded-xl shadow-md">
+        <div class="text-3xl mb-2">
+         🌾
+        </div>
+        <div class="text-sm opacity-70 mb-1">
+         Active Listings
+        </div>
+        <div id="stat-listings" class="text-2xl font-bold">
+         0
+        </div>
+       </div>
+       <div class="stat-card p-6 rounded-xl shadow-md">
+        <div class="text-3xl mb-2">
+         💰
+        </div>
+        <div class="text-sm opacity-70 mb-1">
+         Total Volume
+        </div>
+        <div id="stat-volume" class="text-2xl font-bold">
+         0 kg
+        </div>
+       </div>
+      </div><!-- Price Table -->
+      <div class="price-table-card p-6 rounded-xl shadow-md">
+       <h4 class="font-display text-2xl font-bold mb-4">Current Market Prices</h4>
+       <div id="price-table" class="overflow-x-auto"><!-- Dynamic price table -->
+       </div>
+      </div>
+     </div><!-- CONTRACTS VIEW -->
+     <div id="view-contracts" class="view-container hidden">
+      <div class="mb-8">
+       <h3 class="font-display text-4xl font-bold mb-2">Supply Contracts</h3>
+       <p class="text-lg opacity-70">Manage recurring supply agreements</p>
+      </div><button id="btn-create-contract" class="px-6 py-3 rounded-lg font-semibold shadow-md hover-lift mb-6"> + Create New Contract </button> <!-- Active Contracts -->
+      <div id="contracts-list" class="space-y-4"><!-- Dynamic contracts -->
+      </div>
+      <div id="contracts-empty" class="hidden text-center py-16">
+       <div class="text-6xl mb-4">
+        📋
+       </div>
+       <p class="text-xl opacity-60">No contracts yet. Create your first supply agreement!</p>
+      </div>
+     </div><!-- LOGISTICS VIEW -->
+     <div id="view-logistics" class="view-container hidden">
+      <div class="mb-8">
+       <h3 class="font-display text-4xl font-bold mb-2">Logistics &amp; Scheduling</h3>
+       <p class="text-lg opacity-70">Automated delivery planning and order tracking</p>
+      </div><button id="btn-schedule-delivery" class="px-6 py-3 rounded-lg font-semibold shadow-md hover-lift mb-6"> + Schedule Delivery </button> <!-- Delivery Calendar -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+       <div class="logistics-card p-6 rounded-xl shadow-md">
+        <h4 class="font-display text-2xl font-bold mb-4">📅 Upcoming Deliveries</h4>
+        <div id="deliveries-list" class="space-y-3"><!-- Dynamic deliveries -->
+        </div>
+       </div>
+       <div class="logistics-card p-6 rounded-xl shadow-md">
+        <h4 class="font-display text-2xl font-bold mb-4">🚚 Route Optimization</h4>
+        <div id="route-info" class="space-y-3">
+         <div class="flex justify-between items-center p-3 rounded-lg bg-opacity-50"><span>Total Routes Today</span> <span id="routes-count" class="font-bold">0</span>
+         </div>
+         <div class="flex justify-between items-center p-3 rounded-lg bg-opacity-50"><span>Estimated Distance</span> <span id="routes-distance" class="font-bold">0 km</span>
+         </div>
+         <div class="flex justify-between items-center p-3 rounded-lg bg-opacity-50"><span>Delivery Time</span> <span id="routes-time" class="font-bold">0 hrs</span>
+         </div>
+        </div>
+       </div>
+      </div>
+      <div id="logistics-empty" class="hidden text-center py-16">
+       <div class="text-6xl mb-4">
+        🚚
+       </div>
+       <p class="text-xl opacity-60">No scheduled deliveries. Create your first delivery schedule!</p>
+      </div>
+     </div><!-- PAYMENTS VIEW -->
+     <div id="view-payments" class="view-container hidden">
+      <div class="mb-8">
+       <h3 class="font-display text-4xl font-bold mb-2">Payments &amp; Invoicing</h3>
+       <p class="text-lg opacity-70">Track transactions and manage invoices</p>
+       <div class="inline-block mt-2 px-4 py-2 rounded-lg text-sm font-semibold" style="background-color: rgba(255,193,7,0.2); color: #f57c00;">
+        🔒 Demo Mode - No Real Payments Processed
+       </div>
+      </div><!-- Payment Stats -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+       <div class="payment-card p-6 rounded-xl shadow-md">
+        <div class="text-3xl mb-2">
+         💳
+        </div>
+        <div class="text-sm opacity-70 mb-1">
+         Total Revenue
+        </div>
+        <div id="payment-revenue" class="text-3xl font-bold">
+         $0.00
+        </div>
+       </div>
+       <div class="payment-card p-6 rounded-xl shadow-md">
+        <div class="text-3xl mb-2">
+         📝
+        </div>
+        <div class="text-sm opacity-70 mb-1">
+         Pending Invoices
+        </div>
+        <div id="payment-pending" class="text-3xl font-bold">
+         0
+        </div>
+       </div>
+       <div class="payment-card p-6 rounded-xl shadow-md">
+        <div class="text-3xl mb-2">
+         ✅
+        </div>
+        <div class="text-sm opacity-70 mb-1">
+         Paid Invoices
+        </div>
+        <div id="payment-paid" class="text-3xl font-bold">
+         0
+        </div>
+       </div>
+      </div><button id="btn-create-invoice" class="px-6 py-3 rounded-lg font-semibold shadow-md hover-lift mb-6"> + Create Invoice </button> <!-- Invoices List -->
+      <div id="invoices-list" class="space-y-4"><!-- Dynamic invoices -->
+      </div>
+      <div id="payments-empty" class="hidden text-center py-16">
+       <div class="text-6xl mb-4">
+        💰
+       </div>
+       <p class="text-xl opacity-60">No invoices yet. Create your first invoice!</p>
+      </div>
+     </div>
+    </main><!-- AI Chatbot --> <button id="chatbot-toggle" class="fixed bottom-6 right-6 w-16 h-16 rounded-full shadow-2xl flex items-center justify-center text-3xl hover-lift z-50"> 💬 </button>
+    <div id="chatbot-container" class="hidden fixed bottom-24 right-6 w-96 max-w-[calc(100vw-3rem)] rounded-2xl shadow-2xl overflow-hidden" style="height: 500px;">
+     <div id="chatbot-header" class="px-6 py-4 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+       <div class="text-2xl">
+        🤖
+       </div>
+       <div>
+        <h3 class="font-semibold text-white">AI Assistant</h3>
+        <p class="text-xs opacity-80 text-white">RAG-Powered Support</p>
+       </div>
+      </div><button id="chatbot-close" class="text-white opacity-80 hover:opacity-100">✕</button>
+     </div>
+     <div id="chatbot-messages" class="px-6 py-4 overflow-y-auto space-y-3" style="height: calc(100% - 140px); background: rgba(255,255,255,0.95);">
+      <div class="flex gap-3 fade-in">
+       <div class="text-2xl">
+        🤖
+       </div>
+       <div class="flex-1 rounded-xl px-4 py-3 text-sm" style="background-color: rgba(0,0,0,0.05);">
+        Hi! I can help you with: <br>
+        • Product availability &amp; pricing <br>
+        • Contract inquiries <br>
+        • Delivery scheduling <br>
+        • Payment status <br><br>
+        What would you like to know?
+       </div>
+      </div>
+     </div>
+     <form id="chatbot-form" class="border-t p-4 bg-white">
+      <div class="flex gap-2"><input type="text" id="chatbot-input" placeholder="Ask about products, prices, delivery..." class="flex-1 px-4 py-3 rounded-xl border-2 text-sm" required> <button type="submit" id="chatbot-send" class="px-6 py-3 rounded-xl font-semibold text-sm hover-lift text-white"> Send </button>
+      </div>
+     </form>
+    </div><!-- Modal Container -->
+    <div id="modal-overlay" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-6">
+     <div id="modal-content" class="rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"><!-- Dynamic modal content -->
+     </div>
+    </div><!-- Toast Notification -->
+    <div id="toast" class="hidden fixed bottom-6 left-1/2 transform -translate-x-1/2 px-6 py-4 rounded-xl shadow-lg font-medium text-white"><span id="toast-message"></span>
+    </div>
+   </div>
+  </div>
+  <script>
+    const defaultConfig = {
+      platform_title: "Farm to Table Direct",
+      hero_headline: "Direct Farm-to-Restaurant Marketplace",
+      hero_subtitle: "Real-time pricing, contracts, and logistics automation",
+      background_color: "#f8fef9",
+      surface_color: "#ffffff",
+      text_color: "#1a3d2e",
+      primary_action_color: "#2d8659",
+      secondary_action_color: "#5fb383",
+      font_family: "Plus Jakarta Sans",
+      font_size: 16
+    };
+
+    let config = { ...defaultConfig };
+    let allListings = [];
+    let allContracts = [];
+    let allDeliveries = [];
+    let allInvoices = [];
+    let currentView = 'marketplace';
+    let isChatOpen = false;
+
+    // Market price simulation data
+    const marketPrices = {
+      vegetables: { base: 3.5, trend: 5, unit: 'kg' },
+      fruits: { base: 4.2, trend: -2, unit: 'kg' },
+      grains: { base: 2.1, trend: 8, unit: 'kg' },
+      dairy: { base: 5.8, trend: 3, unit: 'L' },
+      eggs: { base: 4.5, trend: 1, unit: 'dozen' }
+    };
+
+    // Initialize Data SDK
+    const dataHandler = {
+      onDataChanged(data) {
+        allListings = data.filter(item => item.type === 'listing');
+        updateAllViews();
+      }
+    };
+
+    async function initDataSdk() {
+      if (!window.dataSdk) return;
+      const result = await window.dataSdk.init(dataHandler);
+      if (!result.isOk) {
+        showToast('Failed to connect to database', true);
+      }
+    }
+
+    // Navigation
+    function switchView(viewName) {
+      currentView = viewName;
+      document.querySelectorAll('.view-container').forEach(v => v.classList.add('hidden'));
+      document.getElementById(`view-${viewName}`).classList.remove('hidden');
+      
+      document.querySelectorAll('.nav-btn ').forEach(btn => {
+        btn.style.backgroundColor = 'transparent';
+        btn.style.color = config.text_color || defaultConfig.text_color;
+      });
+      
+      const activeBtn = document.getElementById(`nav-${viewName}`);
+      if (activeBtn) {
+        activeBtn.style.backgroundColor = config.primary_action_color || defaultConfig.primary_action_color;
+        activeBtn.style.color = '#ffffff';
+      }
+      
+      updateAllViews();
+    }
+
+    // Marketplace Functions
+    function renderMarketplace() {
+      const grid = document.getElementById('marketplace-grid');
+      const empty = document.getElementById('marketplace-empty');
+      
+      let filtered = allListings;
+      
+      const categoryFilter = document.getElementById('filter-category').value;
+      const locationFilter = document.getElementById('filter-location').value.toLowerCase();
+      
+      if (categoryFilter !== 'all') {
+        filtered = filtered.filter(l => l.products.toLowerCase().includes(categoryFilter));
+      }
+      
+      if (locationFilter) {
+        filtered = filtered.filter(l => l.location.toLowerCase().includes(locationFilter));
+      }
+      
+      if (filtered.length === 0) {
+        grid.innerHTML = '';
+        empty.classList.remove('hidden');
+        return;
+      }
+      
+      empty.classList.add('hidden');
+      grid.innerHTML = filtered.map(listing => `
+        <div class="listing-card p-6 rounded-xl shadow-md hover-lift fade-in">
+          <div class="flex justify-between items-start mb-4">
+            <div class="text-3xl">${listing.user_type === 'farmer' ? '🌾' : '🍽️'}</div>
+            <span class="text-xs px-3 py-1 rounded-full font-semibold" style="background-color: ${config.secondary_action_color || defaultConfig.secondary_action_color}30; color: ${config.primary_action_color || defaultConfig.primary_action_color};">
+              ${listing.user_type}
+            </span>
+          </div>
+          <h4 class="font-display text-xl font-bold mb-2">${listing.business_name}</h4>
+          <p class="text-sm opacity-70 mb-2">📍 ${listing.location}</p>
+          <p class="text-sm font-semibold mb-3" style="color: ${config.primary_action_color || defaultConfig.primary_action_color};">
+            ${listing.products}
+          </p>
+          <div class="flex justify-between items-center mb-3">
+            <span class="text-2xl font-bold" style="color: ${config.primary_action_color || defaultConfig.primary_action_color};">
+              $${listing.price_per_unit}/${listing.unit}
+            </span>
+            <span class="text-sm opacity-70">${listing.available_quantity} ${listing.unit} available</span>
+          </div>
+          <p class="text-sm opacity-80 mb-4">${listing.description}</p>
+          <div class="text-xs opacity-60 mb-3">📅 Delivery: ${listing.delivery_days}</div>
+          <div class="flex gap-2">
+            <button onclick="createContractFromListing('${listing.__backendId}')" class="flex-1 px-4 py-2 rounded-lg font-semibold text-sm hover-lift" style="background-color: ${config.primary_action_color || defaultConfig.primary_action_color}; color: white;">
+              Create Contract
+            </button>
+            <button onclick="contactSeller('${listing.email}', '${listing.phone}')" class="px-4 py-2 rounded-lg font-semibold text-sm hover-lift border-2" style="border-color: ${config.primary_action_color || defaultConfig.primary_action_color}; color: ${config.primary_action_color || defaultConfig.primary_action_color};">
+              Contact
+            </button>
+          </div>
+        </div>
+      `).join( ' ');
+    }
+
+    // Pricing Dashboard
+    function renderPricing() {
+      // Calculate statistics
+      const avgPrice = allListings.length > 0 
+        ? (allListings.reduce((sum, l) => sum + l.price_per_unit, 0) / allListings.length).toFixed(2)
+        : '0.00';
+      
+      const totalVolume = allListings.reduce((sum, l) => sum + l.available_quantity, 0);
+      
+      document.getElementById('stat-avg-price').textContent = `$${avgPrice}`;
+      document.getElementById('stat-trend').textContent = '+5.2%';
+      document.getElementById('stat-listings').textContent = allListings.length;
+      document.getElementById('stat-volume').textContent = `${totalVolume} kg`;
+      
+      // Price table
+      const priceTable = document.getElementById('price-table');
+      priceTable.innerHTML = `
+        <table class="w-full">
+          <thead>
+            <tr class="border-b-2">
+              <th class="text-left py-3 px-2">Category</th>
+              <th class="text-right py-3 px-2">Market Price</th>
+              <th class="text-right py-3 px-2">Trend</th>
+              <th class="text-right py-3 px-2">Supply</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${Object.entries(marketPrices).map(([cat, data]) => {
+              const supply = allListings.filter(l => l.products.toLowerCase().includes(cat)).length;
+              const trendColor = data.trend >= 0 ? '#16a34a' : '#dc2626';
+              return `
+                <tr class="border-b">
+                  <td class="py-3 px-2 font-semibold capitalize">${cat}</td>
+                  <td class="text-right py-3 px-2 font-bold">$${data.base.toFixed(2)}/${data.unit}</td>
+                  <td class="text-right py-3 px-2 font-semibold" style="color: ${trendColor};">
+                    ${data.trend > 0 ? '↑' : '↓'} ${Math.abs(data.trend)}%
+                  </td>
+                  <td class="text-right py-3 px-2">${supply} listings</td>
+                </tr>
+              `;
+            }).join('')}
+          </tbody>
+        </table>
+      `;
+    }
+
+    // Contracts Management
+    function renderContracts() {
+      const list = document.getElementById('contracts-list');
+      const empty = document.getElementById('contracts-empty');
+      
+      if (allContracts.length === 0) {
+        list.innerHTML = '';
+        empty.classList.remove('hidden');
+        return;
+      }
+      
+      empty.classList.add('hidden');
+      list.innerHTML = allContracts.map(contract => `
+        <div class="contract-card p-6 rounded-xl shadow-md hover-lift fade-in">
+          <div class="flex justify-between items-start mb-4">
+            <div>
+              <h4 class="font-display text-xl font-bold mb-1">${contract.product}</h4>
+              <p class="text-sm opacity-70">Contract #${contract.id}</p>
+            </div>
+            <span class="text-xs px-3 py-1 rounded-full font-semibold" style="background-color: ${contract.status === 'active' ? '#16a34a' : '#eab308'}30; color: ${contract.status === 'active' ? '#16a34a' : '#eab308'};">
+              ${contract.status}
+            </span>
+          </div>
+          <div class="grid grid-cols-2 gap-4 mb-4">
+            <div>
+              <div class="text-xs opacity-60 mb-1">Supplier</div>
+              <div class="font-semibold">${contract.supplier}</div>
+            </div>
+            <div>
+              <div class="text-xs opacity-60 mb-1">Buyer</div>
+              <div class="font-semibold">${contract.buyer}</div>
+            </div>
+            <div>
+              <div class="text-xs opacity-60 mb-1">Quantity</div>
+              <div class="font-semibold">${contract.quantity} ${contract.unit}</div>
+            </div>
+            <div>
+              <div class="text-xs opacity-60 mb-1">Price</div>
+              <div class="font-semibold">$${contract.price}/${contract.unit}</div>
+            </div>
+            <div>
+              <div class="text-xs opacity-60 mb-1">Frequency</div>
+              <div class="font-semibold">${contract.frequency}</div>
+            </div>
+            <div>
+              <div class="text-xs opacity-60 mb-1">Duration</div>
+              <div class="font-semibold">${contract.duration}</div>
+            </div>
+          </div>
+          <div class="flex gap-2">
+            <button onclick="viewContractDetails('${contract.id}')" class="flex-1 px-4 py-2 rounded-lg font-semibold text-sm hover-lift" style="background-color: ${config.primary_action_color || defaultConfig.primary_action_color}; color: white;">
+              View Details
+            </button>
+            <button onclick="deleteContract('${contract.id}')" class="px-4 py-2 rounded-lg font-semibold text-sm hover-lift border-2 border-red-500 text-red-500">
+              Cancel
+            </button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Logistics Management
+    function renderLogistics() {
+      const list = document.getElementById('deliveries-list');
+      const empty = document.getElementById('logistics-empty');
+      
+      if (allDeliveries.length === 0) {
+        list.innerHTML = '<p class="text-sm opacity-60 text-center py-4">No scheduled deliveries</p>';
+        document.getElementById('routes-count').textContent = '0';
+        document.getElementById('routes-distance').textContent = '0 km';
+        document.getElementById('routes-time').textContent = '0 hrs';
+        return;
+      }
+      
+      list.innerHTML = allDeliveries.map(delivery => `
+        <div class="p-4 rounded-lg border-2 hover-lift fade-in" style="border-color: ${config.primary_action_color || defaultConfig.primary_action_color}30;">
+          <div class="flex justify-between items-start mb-2">
+            <div class="font-semibold">${delivery.product}</div>
+            <span class="text-xs px-2 py-1 rounded-full" style="background-color: ${delivery.status === 'scheduled' ? '#eab308' : '#16a34a'}30; color: ${delivery.status === 'scheduled' ? '#eab308' : '#16a34a'};">
+              ${delivery.status}
+            </span>
+          </div>
+          <div class="text-sm opacity-70 mb-2">📍 ${delivery.from} → ${delivery.to}</div>
+          <div class="text-sm font-semibold" style="color: ${config.primary_action_color || defaultConfig.primary_action_color};">
+            📅 ${delivery.date} | ${delivery.quantity} ${delivery.unit}
+          </div>
+        </div>
+      `).join('');
+      
+      // Route optimization stats
+      const totalDistance = allDeliveries.length * 25; // Simulated
+      const totalTime = allDeliveries.length * 1.5; // Simulated
+      
+      document.getElementById('routes-count').textContent = allDeliveries.length;
+      document.getElementById('routes-distance').textContent = `${totalDistance} km`;
+      document.getElementById('routes-time').textContent = `${totalTime.toFixed(1)} hrs`;
+    }
+
+    // Payments & Invoicing
+    function renderPayments() {
+      const list = document.getElementById('invoices-list');
+      const empty = document.getElementById('payments-empty');
+      
+      if (allInvoices.length === 0) {
+        list.innerHTML = '';
+        empty.classList.remove('hidden');
+        document.getElementById('payment-revenue').textContent = '$0.00';
+        document.getElementById('payment-pending').textContent = '0';
+        document.getElementById('payment-paid').textContent = '0';
+        return;
+      }
+      
+      empty.classList.add('hidden');
+      
+      const totalRevenue = allInvoices.reduce((sum, inv) => sum + inv.amount, 0);
+      const pending = allInvoices.filter(inv => inv.status === 'pending').length;
+      const paid = allInvoices.filter(inv => inv.status === 'paid').length;
+      
+      document.getElementById('payment-revenue').textContent = `$${totalRevenue.toFixed(2)}`;
+      document.getElementById('payment-pending').textContent = pending;
+      document.getElementById('payment-paid').textContent = paid;
+      
+      list.innerHTML = allInvoices.map(invoice => `
+        <div class="invoice-card p-6 rounded-xl shadow-md hover-lift fade-in">
+          <div class="flex justify-between items-start mb-4">
+            <div>
+              <h4 class="font-display text-xl font-bold mb-1">Invoice #${invoice.id}</h4>
+              <p class="text-sm opacity-70">${invoice.date}</p>
+            </div>
+            <span class="text-xs px-3 py-1 rounded-full font-semibold" style="background-color: ${invoice.status === 'paid' ? '#16a34a' : '#eab308'}30; color: ${invoice.status === 'paid' ? '#16a34a' : '#eab308'};">
+              ${invoice.status}
+            </span>
+          </div>
+          <div class="mb-4">
+            <div class="text-sm opacity-60 mb-1">From: ${invoice.from}</div>
+            <div class="text-sm opacity-60 mb-3">To: ${invoice.to}</div>
+            <div class="font-semibold mb-2">${invoice.product}</div>
+            <div class="text-sm">${invoice.quantity} ${invoice.unit} × $${invoice.pricePerUnit}</div>
+          </div>
+          <div class="flex justify-between items-center pt-4 border-t-2">
+            <span class="text-2xl font-bold" style="color: ${config.primary_action_color || defaultConfig.primary_action_color};">
+              $${invoice.amount.toFixed(2)}
+            </span>
+            ${invoice.status === 'pending' ? `
+              <button onclick="markInvoicePaid('${invoice.id}')" class="px-4 py-2 rounded-lg font-semibold text-sm hover-lift" style="background-color: ${config.primary_action_color || defaultConfig.primary_action_color}; color: white;">
+                Mark as Paid
+              </button>
+            ` : `
+              <span class="text-sm font-semibold" style="color: #16a34a;">✓ Paid</span>
+            `}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Modal Functions
+    function showModal(content) {
+      const overlay = document.getElementById('modal-overlay');
+      const modalContent = document.getElementById('modal-content');
+      modalContent.innerHTML = content;
+      overlay.classList.remove('hidden');
+    }
+
+    function hideModal() {
+      document.getElementById('modal-overlay').classList.add('hidden');
+    }
+
+    document.getElementById('modal-overlay').addEventListener('click', (e) => {
+      if (e.target.id === 'modal-overlay') hideModal();
+    });
+
+    // Add Listing Modal
+    function showAddListingModal() {
+      showModal(`
+        <div class="p-8" style="background-color: ${config.surface_color || defaultConfig.surface_color};">
+          <h3 class="font-display text-3xl font-bold mb-6" style="color: ${config.text_color || defaultConfig.text_color};">Add New Listing</h3>
+          <form id="add-listing-form" class="space-y-4">
+            <div>
+              <label class="block text-sm font-medium mb-2">I am a:</label>
+              <select id="listing-user-type" class="w-full px-4 py-3 rounded-lg border-2" required>
+                <option value="farmer">🌾 Farmer (Selling)</option>
+                <option value="restaurant">🍽️ Restaurant (Buying)</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-2">Your Name</label>
+              <input type="text" id="listing-name" class="w-full px-4 py-3 rounded-lg border-2" required>
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-2">Business Name</label>
+              <input type="text" id="listing-business" class="w-full px-4 py-3 rounded-lg border-2" required>
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-2">Location</label>
+              <input type="text" id="listing-location" class="w-full px-4 py-3 rounded-lg border-2" placeholder="City, State" required>
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-2">Products</label>
+              <input type="text" id="listing-products" class="w-full px-4 py-3 rounded-lg border-2" placeholder="e.g., Organic Tomatoes, Fresh Eggs" required>
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-2">Description</label>
+              <textarea id="listing-description" rows="3" class="w-full px-4 py-3 rounded-lg border-2" required></textarea>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-medium mb-2">Price per Unit</label>
+                <input type="number" step="0.01" id="listing-price" class="w-full px-4 py-3 rounded-lg border-2" required>
+              </div>
+              <div>
+                <label class="block text-sm font-medium mb-2">Unit</label>
+                <select id="listing-unit" class="w-full px-4 py-3 rounded-lg border-2" required>
+                  <option value="kg">kg</option>
+                  <option value="lb">lb</option>
+                  <option value="dozen">dozen</option>
+                  <option value="L">L</option>
+                  <option value="unit">unit</option>
+                </select>
+              </div>
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-2">Available Quantity</label>
+              <input type="number" id="listing-quantity" class="w-full px-4 py-3 rounded-lg border-2" required>
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-2">Delivery Days</label>
+              <input type="text" id="listing-delivery" class="w-full px-4 py-3 rounded-lg border-2" placeholder="e.g., Mon, Wed, Fri" required>
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-2">Email</label>
+              <input type="email" id="listing-email" class="w-full px-4 py-3 rounded-lg border-2" required>
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-2">Phone</label>
+              <input type="tel" id="listing-phone" class="w-full px-4 py-3 rounded-lg border-2" required>
+            </div>
+            <div class="flex gap-3 pt-4">
+              <button type="submit" class="flex-1 px-6 py-3 rounded-lg font-semibold hover-lift" style="background-color: ${config.primary_action_color || defaultConfig.primary_action_color}; color: white;">
+                Add Listing
+              </button>
+              <button type="button" onclick="hideModal()" class="px-6 py-3 rounded-lg font-semibold border-2 hover-lift">
+                Cancel
+              </button>
+            </div>
+          </form>
+        </div>
+      `);
+      
+      document.getElementById('add-listing-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        if (allListings.length >= 999) {
+          showToast('Maximum listing limit reached', true);
+          return;
+        }
+        
+        const newListing = {
+          type: 'listing',
+          user_type: document.getElementById('listing-user-type').value,
+          name: document.getElementById('listing-name').value,
+          business_name: document.getElementById('listing-business').value,
+          location: document.getElementById('listing-location').value,
+          products: document.getElementById('listing-products').value,
+          description: document.getElementById('listing-description').value,
+          price_per_unit: parseFloat(document.getElementById('listing-price').value),
+          unit: document.getElementById('listing-unit').value,
+          available_quantity: parseInt(document.getElementById('listing-quantity').value),
+          delivery_days: document.getElementById('listing-delivery').value,
+          email: document.getElementById('listing-email').value,
+          phone: document.getElementById('listing-phone').value,
+          photo_url: '',
+          created_at: new Date().toISOString()
+        };
+        
+        const result = await window.dataSdk.create(newListing);
+        
+        if (result.isOk) {
+          hideModal();
+          showToast('Listing added successfully! 🎉');
+        } else {
+          showToast('Failed to add listing', true);
+        }
+      });
+    }
+
+    // Create Contract Modal
+    function showCreateContractModal(listingId = null) {
+      const listing = listingId ? allListings.find(l => l.__backendId === listingId) : null;
+      
+      showModal(`
+        <div class="p-8" style="background-color: ${config.surface_color || defaultConfig.surface_color};">
+          <h3 class="font-display text-3xl font-bold mb-6" style="color: ${config.text_color || defaultConfig.text_color};">Create Supply Contract</h3>
+          <form id="create-contract-form" class="space-y-4">
+            <div>
+              <label class="block text-sm font-medium mb-2">Product</label>
+              <input type="text" id="contract-product" class="w-full px-4 py-3 rounded-lg border-2" value="${listing ? listing.products : ''}" required>
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-2">Supplier</label>
+              <input type="text" id="contract-supplier" class="w-full px-4 py-3 rounded-lg border-2" value="${listing ? listing.business_name : ''}" required>
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-2">Buyer</label>
+              <input type="text" id="contract-buyer" class="w-full px-4 py-3 rounded-lg border-2" required>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-medium mb-2">Quantity</label>
+                <input type="number" id="contract-quantity" class="w-full px-4 py-3 rounded-lg border-2" value="${listing ? listing.available_quantity : ''}" required>
+              </div>
+              <div>
+                <label class="block text-sm font-medium mb-2">Unit</label>
+                <select id="contract-unit" class="w-full px-4 py-3 rounded-lg border-2" required>
+                  <option value="kg" ${listing && listing.unit === 'kg' ? 'selected' : ''}>kg</option>
+                  <option value="lb" ${listing && listing.unit === 'lb' ? 'selected' : ''}>lb</option>
+                  <option value="dozen" ${listing && listing.unit === 'dozen' ? 'selected' : ''}>dozen</option>
+                  <option value="L" ${listing && listing.unit === 'L' ? 'selected' : ''}>L</option>
+                </select>
+              </div>
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-2">Price per Unit ($)</label>
+              <input type="number" step="0.01" id="contract-price" class="w-full px-4 py-3 rounded-lg border-2" value="${listing ? listing.price_per_unit : ''}" required>
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-2">Delivery Frequency</label>
+              <select id="contract-frequency" class="w-full px-4 py-3 rounded-lg border-2" required>
+                <option value="Weekly">Weekly</option>
+                <option value="Bi-weekly">Bi-weekly</option>
+                <option value="Monthly">Monthly</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-2">Contract Duration</label>
+              <select id="contract-duration" class="w-full px-4 py-3 rounded-lg border-2" required>
+                <option value="3 months">3 months</option>
+                <option value="6 months">6 months</option>
+                <option value="1 year">1 year</option>
+                <option value="2 years">2 years</option>
+              </select>
+            </div>
+            <div class="flex gap-3 pt-4">
+              <button type="submit" class="flex-1 px-6 py-3 rounded-lg font-semibold hover-lift" style="background-color: ${config.primary_action_color || defaultConfig.primary_action_color}; color: white;">
+                Create Contract
+              </button>
+              <button type="button" onclick="hideModal()" class="px-6 py-3 rounded-lg font-semibold border-2 hover-lift">
+                Cancel
+              </button>
+            </div>
+          </form>
+        </div>
+      `);
+      
+      document.getElementById('create-contract-form').addEventListener('submit', (e) => {
+        e.preventDefault();
+        
+        const newContract = {
+          id: 'CNT' + Date.now(),
+          product: document.getElementById('contract-product').value,
+          supplier: document.getElementById('contract-supplier').value,
+          buyer: document.getElementById('contract-buyer').value,
+          quantity: document.getElementById('contract-quantity').value,
+          unit: document.getElementById('contract-unit').value,
+          price: document.getElementById('contract-price').value,
+          frequency: document.getElementById('contract-frequency').value,
+          duration: document.getElementById('contract-duration').value,
+          status: 'active',
+          createdAt: new Date().toISOString()
+        };
+        
+        allContracts.push(newContract);
+        hideModal();
+        showToast('Contract created successfully! 📋');
+        renderContracts();
+      });
+    }
+
+    // Schedule Delivery Modal
+    function showScheduleDeliveryModal() {
+      showModal(`
+        <div class="p-8" style="background-color: ${config.surface_color || defaultConfig.surface_color};">
+          <h3 class="font-display text-3xl font-bold mb-6" style="color: ${config.text_color || defaultConfig.text_color};">Schedule Delivery</h3>
+          <form id="schedule-delivery-form" class="space-y-4">
+            <div>
+              <label class="block text-sm font-medium mb-2">Product</label>
+              <input type="text" id="delivery-product" class="w-full px-4 py-3 rounded-lg border-2" required>
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-2">From (Pickup Location)</label>
+              <input type="text" id="delivery-from" class="w-full px-4 py-3 rounded-lg border-2" required>
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-2">To (Delivery Location)</label>
+              <input type="text" id="delivery-to" class="w-full px-4 py-3 rounded-lg border-2" required>
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-2">Delivery Date</label>
+              <input type="date" id="delivery-date" class="w-full px-4 py-3 rounded-lg border-2" required>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-medium mb-2">Quantity</label>
+                <input type="number" id="delivery-quantity" class="w-full px-4 py-3 rounded-lg border-2" required>
+              </div>
+              <div>
+                <label class="block text-sm font-medium mb-2">Unit</label>
+                <select id="delivery-unit" class="w-full px-4 py-3 rounded-lg border-2" required>
+                  <option value="kg">kg</option>
+                  <option value="lb">lb</option>
+                  <option value="dozen">dozen</option>
+                  <option value="L">L</option>
+                </select>
+              </div>
+            </div>
+            <div class="flex gap-3 pt-4">
+              <button type="submit" class="flex-1 px-6 py-3 rounded-lg font-semibold hover-lift" style="background-color: ${config.primary_action_color || defaultConfig.primary_action_color}; color: white;">
+                Schedule Delivery
+              </button>
+              <button type="button" onclick="hideModal()" class="px-6 py-3 rounded-lg font-semibold border-2 hover-lift">
+                Cancel
+              </button>
+            </div>
+          </form>
+        </div>
+      `);
+      
+      document.getElementById('schedule-delivery-form').addEventListener('submit', (e) => {
+        e.preventDefault();
+        
+        const newDelivery = {
+          id: 'DEL' + Date.now(),
+          product: document.getElementById('delivery-product').value,
+          from: document.getElementById('delivery-from').value,
+          to: document.getElementById('delivery-to').value,
+          date: document.getElementById('delivery-date').value,
+          quantity: document.getElementById('delivery-quantity').value,
+          unit: document.getElementById('delivery-unit').value,
+          status: 'scheduled'
+        };
+        
+        allDeliveries.push(newDelivery);
+        hideModal();
+        showToast('Delivery scheduled successfully! 🚚');
+        renderLogistics();
+      });
+    }
+
+    // Create Invoice Modal
+    function showCreateInvoiceModal() {
+      showModal(`
+        <div class="p-8" style="background-color: ${config.surface_color || defaultConfig.surface_color};">
+          <h3 class="font-display text-3xl font-bold mb-6" style="color: ${config.text_color || defaultConfig.text_color};">Create Invoice</h3>
+          <div class="mb-4 p-3 rounded-lg text-sm font-semibold" style="background-color: rgba(255,193,7,0.2); color: #f57c00;">
+            🔒 Demo Mode - No Real Payment Processing
+          </div>
+          <form id="create-invoice-form" class="space-y-4">
+            <div>
+              <label class="block text-sm font-medium mb-2">From (Your Business)</label>
+              <input type="text" id="invoice-from" class="w-full px-4 py-3 rounded-lg border-2" required>
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-2">To (Customer)</label>
+              <input type="text" id="invoice-to" class="w-full px-4 py-3 rounded-lg border-2" required>
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-2">Product/Service</label>
+              <input type="text" id="invoice-product" class="w-full px-4 py-3 rounded-lg border-2" required>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-medium mb-2">Quantity</label>
+                <input type="number" id="invoice-quantity" class="w-full px-4 py-3 rounded-lg border-2" required>
+              </div>
+              <div>
+                <label class="block text-sm font-medium mb-2">Unit</label>
+                <select id="invoice-unit" class="w-full px-4 py-3 rounded-lg border-2" required>
+                  <option value="kg">kg</option>
+                  <option value="lb">lb</option>
+                  <option value="dozen">dozen</option>
+                  <option value="L">L</option>
+                </select>
+              </div>
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-2">Price per Unit ($)</label>
+              <input type="number" step="0.01" id="invoice-price-per-unit" class="w-full px-4 py-3 rounded-lg border-2" required>
+            </div>
+            <div class="p-4 rounded-lg" style="background-color: ${config.primary_action_color || defaultConfig.primary_action_color}20;">
+              <div class="flex justify-between items-center">
+                <span class="font-semibold">Total Amount:</span>
+                <span id="invoice-total" class="text-2xl font-bold" style="color: ${config.primary_action_color || defaultConfig.primary_action_color};">$0.00</span>
+              </div>
+            </div>
+            <div class="flex gap-3 pt-4">
+              <button type="submit" class="flex-1 px-6 py-3 rounded-lg font-semibold hover-lift" style="background-color: ${config.primary_action_color || defaultConfig.primary_action_color}; color: white;">
+                Create Invoice
+              </button>
+              <button type="button" onclick="hideModal()" class="px-6 py-3 rounded-lg font-semibold border-2 hover-lift">
+                Cancel
+              </button>
+            </div>
+          </form>
+        </div>
+      `);
+      
+      const quantityInput = document.getElementById('invoice-quantity');
+      const priceInput = document.getElementById('invoice-price-per-unit');
+      const totalDisplay = document.getElementById('invoice-total');
+      
+      function updateTotal() {
+        const quantity = parseFloat(quantityInput.value) || 0;
+        const price = parseFloat(priceInput.value) || 0;
+        const total = quantity * price;
+        totalDisplay.textContent = `$${total.toFixed(2)}`;
+      }
+      
+      quantityInput.addEventListener('input', updateTotal);
+      priceInput.addEventListener('input', updateTotal);
+      
+      document.getElementById('create-invoice-form').addEventListener('submit', (e) => {
+        e.preventDefault();
+        
+        const quantity = parseFloat(document.getElementById('invoice-quantity').value);
+        const pricePerUnit = parseFloat(document.getElementById('invoice-price-per-unit').value);
+        
+        const newInvoice = {
+          id: 'INV' + Date.now(),
+          from: document.getElementById('invoice-from').value,
+          to: document.getElementById('invoice-to').value,
+          product: document.getElementById('invoice-product').value,
+          quantity: quantity,
+          unit: document.getElementById('invoice-unit').value,
+          pricePerUnit: pricePerUnit,
+          amount: quantity * pricePerUnit,
+          status: 'pending',
+          date: new Date().toLocaleDateString()
+        };
+        
+        allInvoices.push(newInvoice);
+        hideModal();
+        showToast('Invoice created successfully! 💰');
+        renderPayments();
+      });
+    }
+
+    // Helper Functions
+    window.createContractFromListing = function(listingId) {
+      showCreateContractModal(listingId);
+    };
+
+    window.contactSeller = function(email, phone) {
+      showModal(`
+        <div class="p-8 text-center" style="background-color: ${config.surface_color || defaultConfig.surface_color};">
+          <div class="text-6xl mb-4">📞</div>
+          <h3 class="font-display text-3xl font-bold mb-6" style="color: ${config.text_color || defaultConfig.text_color};">Contact Information</h3>
+          <div class="space-y-3 mb-6">
+            <div class="p-4 rounded-lg" style="background-color: ${config.primary_action_color || defaultConfig.primary_action_color}20;">
+              <div class="text-sm opacity-70 mb-1">Email</div>
+              <a href="mailto:${email}" class="font-semibold text-lg" style="color: ${config.primary_action_color || defaultConfig.primary_action_color};">${email}</a>
+            </div>
+            <div class="p-4 rounded-lg" style="background-color: ${config.primary_action_color || defaultConfig.primary_action_color}20;">
+              <div class="text-sm opacity-70 mb-1">Phone</div>
+              <a href="tel:${phone}" class="font-semibold text-lg" style="color: ${config.primary_action_color || defaultConfig.primary_action_color};">${phone}</a>
+            </div>
+          </div>
+          <button onclick="hideModal()" class="px-6 py-3 rounded-lg font-semibold hover-lift" style="background-color: ${config.primary_action_color || defaultConfig.primary_action_color}; color: white;">
+            Close
+          </button>
+        </div>
+      `);
+    };
+
+    window.viewContractDetails = function(contractId) {
+      const contract = allContracts.find(c => c.id === contractId);
+      if (!contract) return;
+      
+      showModal(`
+        <div class="p-8" style="background-color: ${config.surface_color || defaultConfig.surface_color};">
+          <h3 class="font-display text-3xl font-bold mb-6" style="color: ${config.text_color || defaultConfig.text_color};">Contract Details</h3>
+          <div class="space-y-4">
+            <div>
+              <div class="text-sm opacity-60">Contract ID</div>
+              <div class="font-semibold">${contract.id}</div>
+            </div>
+            <div>
+              <div class="text-sm opacity-60">Product</div>
+              <div class="font-semibold">${contract.product}</div>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <div class="text-sm opacity-60 mb-1">Supplier</div>
+                <div class="font-semibold">${contract.supplier}</div>
+              </div>
+              <div>
+                <div class="text-sm opacity-60 mb-1">Buyer</div>
+                <div class="font-semibold">${contract.buyer}</div>
+              </div>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <div class="text-sm opacity-60 mb-1">Quantity</div>
+                <div class="font-semibold">${contract.quantity} ${contract.unit}</div>
+              </div>
+              <div>
+                <div class="text-sm opacity-60 mb-1">Price</div>
+                <div class="font-semibold">$${contract.price}/${contract.unit}</div>
+              </div>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <div class="text-sm opacity-60 mb-1">Frequency</div>
+                <div class="font-semibold">${contract.frequency}</div>
+              </div>
+              <div>
+                <div class="text-sm opacity-60 mb-1">Duration</div>
+                <div class="font-semibold">${contract.duration}</div>
+              </div>
+            </div>
+            <div>
+              <div class="text-sm opacity-60 mb-1">Status</div>
+              <div class="font-semibold capitalize">${contract.status}</div>
+            </div>
+          </div>
+          <button onclick="hideModal()" class="w-full mt-6 px-6 py-3 rounded-lg font-semibold hover-lift" style="background-color: ${config.primary_action_color || defaultConfig.primary_action_color}; color: white;">
+            Close
+          </button>
+        </div>
+      `);
+    };
+
+    window.deleteContract = function(contractId) {
+      allContracts = allContracts.filter(c => c.id !== contractId);
+      showToast('Contract cancelled');
+      renderContracts();
+    };
+
+    window.markInvoicePaid = function(invoiceId) {
+      const invoice = allInvoices.find(inv => inv.id === invoiceId);
+      if (invoice) {
+        invoice.status = 'paid';
+        showToast('Invoice marked as paid! ✅');
+        renderPayments();
+      }
+    };
+
+    // Chatbot Functions
+    function addChatMessage(text, isUser = false) {
+      const messagesContainer = document.getElementById('chatbot-messages');
+      const messageDiv = document.createElement('div');
+      messageDiv.className = 'flex gap-3 fade-in';
+      
+      if (isUser) {
+        messageDiv.innerHTML = `
+          <div class="flex-1"></div>
+          <div class="rounded-xl px-4 py-3 text-sm text-white max-w-[80%]" style="background: linear-gradient(135deg, ${config.primary_action_color || defaultConfig.primary_action_color}, ${config.secondary_action_color || defaultConfig.secondary_action_color});">
+            ${text}
+          </div>
+        `;
+      } else {
+        const formatted = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
+        messageDiv.innerHTML = `
+          <div class="text-2xl">🤖</div>
+          <div class="flex-1 rounded-xl px-4 py-3 text-sm max-w-[80%]" style="background-color: rgba(0,0,0,0.05);">
+            ${formatted}
+          </div>
+        `;
+      }
+      
+      messagesContainer.appendChild(messageDiv);
+      messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+
+    function retrieveRelevantData(query) {
+      const lowerQuery = query.toLowerCase();
+      const results = { listings: [], contracts: [], deliveries: [], invoices: [] };
+      
+      // Search listings
+      results.listings = allListings.filter(l => 
+        l.products.toLowerCase().includes(lowerQuery) ||
+        l.location.toLowerCase().includes(lowerQuery) ||
+        l.business_name.toLowerCase().includes(lowerQuery)
+      ).slice(0, 3);
+      
+      // Search contracts
+      results.contracts = allContracts.filter(c =>
+        c.product.toLowerCase().includes(lowerQuery) ||
+        c.supplier.toLowerCase().includes(lowerQuery) ||
+        c.buyer.toLowerCase().includes(lowerQuery)
+      ).slice(0, 2);
+      
+      // Search deliveries
+      results.deliveries = allDeliveries.filter(d =>
+        d.product.toLowerCase().includes(lowerQuery) ||
+        d.from.toLowerCase().includes(lowerQuery) ||
+        d.to.toLowerCase().includes(lowerQuery)
+      ).slice(0, 2);
+      
+      // Search invoices
+      results.invoices = allInvoices.filter(i =>
+        i.product.toLowerCase().includes(lowerQuery) ||
+        i.from.toLowerCase().includes(lowerQuery) ||
+        i.to.toLowerCase().includes(lowerQuery)
+      ).slice(0, 2);
+      
+      return results;
+    }
+
+    function generateChatResponse(query, data) {
+      const lowerQuery = query.toLowerCase();
+      
+      // Greeting
+      if (/^(hi|hello|hey)/i.test(query)) {
+        return "Hello! I'm your marketplace assistant. I can help you with product availability, pricing, contracts, deliveries, and payments. What would you like to know?";
+      }
+      
+      // Price inquiries
+      if (/price|cost|how much/i.test(query)) {
+        if (data.listings.length > 0) {
+          let response = "Here are the current prices:\n\n";
+          data.listings.forEach(l => {
+            response += `**${l.products}** from ${l.business_name}\n`;
+            response += `$${l.price_per_unit}/${l.unit} | ${l.available_quantity} ${l.unit} available\n\n`;
+          });
+          return response;
+        }
+        
+        const category = Object.keys(marketPrices).find(cat => lowerQuery.includes(cat));
+        if (category) {
+          const price = marketPrices[category];
+          return `The current market price for ${category} is **$${price.base}/${price.unit}** with a trend of ${price.trend > 0 ? '↑' : '↓'} ${Math.abs(price.trend)}%.`;
+        }
+      }
+      
+      // Availability
+      if (/available|availability|stock|supply/i.test(query)) {
+        if (data.listings.length > 0) {
+          let response = "Available products:\n\n";
+          data.listings.forEach(l => {
+            response += `**${l.products}**\n`;
+            response += `📍 ${l.location} | ${l.available_quantity} ${l.unit} in stock\n`;
+            response += `Contact: ${l.email}\n\n`;
+          });
+          return response;
+        }
+        return `We have ${allListings.length} active listings. Try searching for specific products like "tomatoes" or "eggs".`;
+      }
+      
+      // Contract inquiries
+      if (/contract|agreement|supply/i.test(query)) {
+        if (data.contracts.length > 0) {
+          let response = "Active contracts:\n\n";
+          data.contracts.forEach(c => {
+            response += `**${c.product}** - Contract #${c.id}\n`;
+            response += `${c.supplier} → ${c.buyer}\n`;
+            response += `${c.quantity} ${c.unit} | ${c.frequency} | ${c.duration}\n\n`;
+          });
+          return response;
+        }
+        return `You have ${allContracts.length} active contracts. Would you like to create a new supply agreement?`;
+      }
+      
+      // Delivery inquiries
+      if (/delivery|shipping|logistics|when/i.test(query)) {
+        if (data.deliveries.length > 0) {
+          let response = "Scheduled deliveries:\n\n";
+          data.deliveries.forEach(d => {
+            response += `**${d.product}**\n`;
+            response += `${d.from} → ${d.to}\n`;
+            response += `📅 ${d.date} | ${d.quantity} ${d.unit}\n\n`;
+          });
+          return response;
+        }
+        return `You have ${allDeliveries.length} scheduled deliveries. Would you like to schedule a new delivery?`;
+      }
+      
+      // Payment inquiries
+      if (/payment|invoice|pay|bill/i.test(query)) {
+        if (data.invoices.length > 0) {
+          let response = "Recent invoices:\n\n";
+          data.invoices.forEach(i => {
+            response += `**Invoice #${i.id}** - ${i.status}\n`;
+            response += `${i.product} | $${i.amount.toFixed(2)}\n`;
+            response += `${i.from} → ${i.to}\n\n`;
+          });
+          return response;
+        }
+        const pending = allInvoices.filter(i => i.status === 'pending').length;
+        const paid = allInvoices.filter(i => i.status === 'paid').length;
+        return `You have ${pending} pending invoices and ${paid} paid invoices. Total invoices: ${allInvoices.length}`;
+      }
+      
+      // Default response
+      if (data.listings.length === 0 && data.contracts.length === 0 && data.deliveries.length === 0 && data.invoices.length === 0) {
+        return `I couldn't find specific results for "${query}". Try asking about:\n• Product prices and availability\n• Contract status\n• Delivery schedules\n• Payment and invoices`;
+      }
+      
+      return "I found some results but need more context. Could you be more specific about what you're looking for?";
+    }
+
+    // Event Listeners
+    document.getElementById('nav-marketplace').addEventListener('click', () => switchView('marketplace'));
+    document.getElementById('nav-pricing').addEventListener('click', () => switchView('pricing'));
+    document.getElementById('nav-contracts').addEventListener('click', () => switchView('contracts'));
+    document.getElementById('nav-logistics').addEventListener('click', () => switchView('logistics'));
+    document.getElementById('nav-payments').addEventListener('click', () => switchView('payments'));
+
+    document.getElementById('hero-cta-farmer').addEventListener('click', () => {
+      switchView('marketplace');
+      showAddListingModal();
+    });
+
+    document.getElementById('hero-cta-restaurant').addEventListener('click', () => {
+      switchView('marketplace');
+      showAddListingModal();
+    });
+
+    document.getElementById('btn-add-listing').addEventListener('click', showAddListingModal);
+    document.getElementById('btn-create-contract').addEventListener('click', () => showCreateContractModal());
+    document.getElementById('btn-schedule-delivery').addEventListener('click', showScheduleDeliveryModal);
+    document.getElementById('btn-create-invoice').addEventListener('click', showCreateInvoiceModal);
+
+    document.getElementById('filter-category').addEventListener('change', renderMarketplace);
+    document.getElementById('filter-location').addEventListener('input', renderMarketplace);
+
+    // Chatbot
+    document.getElementById('chatbot-toggle').addEventListener('click', () => {
+      isChatOpen = !isChatOpen;
+      document.getElementById('chatbot-container').classList.toggle('hidden');
+      if (isChatOpen) {
+        document.getElementById('chatbot-input').focus();
+      }
+    });
+
+    document.getElementById('chatbot-close').addEventListener('click', () => {
+      isChatOpen = false;
+      document.getElementById('chatbot-container').classList.add('hidden');
+    });
+
+    document.getElementById('chatbot-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      
+      const input = document.getElementById('chatbot-input');
+      const query = input.value.trim();
+      if (!query) return;
+      
+      addChatMessage(query, true);
+      input.value = '';
+      
+      const sendBtn = document.getElementById('chatbot-send');
+      sendBtn.disabled = true;
+      
+      setTimeout(() => {
+        const data = retrieveRelevantData(query);
+        const response = generateChatResponse(query, data);
+        addChatMessage(response, false);
+        sendBtn.disabled = false;
+      }, 800);
+    });
+
+    // Toast notification
+    function showToast(message, isError = false) {
+      const toast = document.getElementById('toast');
+      const toastMessage = document.getElementById('toast-message');
+      
+      toastMessage.textContent = message;
+      toast.style.backgroundColor = isError ? '#dc2626' : config.primary_action_color || defaultConfig.primary_action_color;
+      toast.classList.remove('hidden');
+      
+      setTimeout(() => {
+        toast.classList.add('hidden');
+      }, 3000);
+    }
+
+    // Update all views
+    function updateAllViews() {
+      renderMarketplace();
+      renderPricing();
+      renderContracts();
+      renderLogistics();
+      renderPayments();
+    }
+
+    // Styling functions
+    function applyStyles() {
+      const bg = config.background_color || defaultConfig.background_color;
+      const surface = config.surface_color || defaultConfig.surface_color;
+      const text = config.text_color || defaultConfig.text_color;
+      const primary = config.primary_action_color || defaultConfig.primary_action_color;
+      const secondary = config.secondary_action_color || defaultConfig.secondary_action_color;
+      const fontFamily = config.font_family || defaultConfig.font_family;
+      const fontSize = config.font_size || defaultConfig.font_size;
+
+      document.getElementById('app-wrapper').style.backgroundColor = bg;
+      document.getElementById('main-nav').style.backgroundColor = surface;
+      document.getElementById('main-nav').style.borderColor = `${text}15`;
+      document.getElementById('nav-title').style.color = text;
+      
+      document.getElementById('hero-section').style.background = `linear-gradient(135deg, ${primary}15, ${secondary}25)`;
+      document.getElementById('hero-section').style.color = text;
+      document.getElementById('hero-headline').style.color = text;
+      document.getElementById('hero-subtitle').style.color = text;
+      
+      const ctaBtns = [document.getElementById('hero-cta-farmer'), document.getElementById('hero-cta-restaurant')];
+      ctaBtns.forEach(btn => {
+        btn.style.background = `linear-gradient(135deg, ${primary}, ${secondary})`;
+        btn.style.color = '#ffffff ';
+      });
+      
+      document.querySelectorAll('.listing-card, .stat-card, .price-table-card, .contract-card, .logistics-card, .payment-card, .invoice-card').forEach(card => {
+        card.style.backgroundColor = surface;
+        card.style.color = text;
+      });
+      
+      document.getElementById('chatbot-toggle').style.background = `linear-gradient(135deg, ${primary}, ${secondary})`;
+      document.getElementById('chatbot-header').style.background = `linear-gradient(135deg, ${primary}, ${secondary})`;
+      document.getElementById('chatbot-send').style.background = `linear-gradient(135deg, ${primary}, ${secondary})`;
+      
+      const baseFontStack = 'sans-serif';
+      document.body.style.fontFamily = `${fontFamily}, ${baseFontStack}`;
+      document.body.style.fontSize = `${fontSize}px`;
+      
+      document.getElementById('hero-headline').style.fontSize = `${fontSize * 3.75}px`;
+      document.getElementById('hero-subtitle').style.fontSize = `${fontSize * 1.25}px`;
+      
+      updateAllViews();
+    }
+
+    // Element SDK integration
+    async function onConfigChange(newConfig) {
+      config = { ...defaultConfig, ...newConfig };
+      
+      document.getElementById('nav-title').textContent = config.platform_title || defaultConfig.platform_title;
+      document.getElementById('hero-headline').textContent = config.hero_headline || defaultConfig.hero_headline;
+      document.getElementById('hero-subtitle').textContent = config.hero_subtitle || defaultConfig.hero_subtitle;
+      
+      applyStyles();
+    }
+
+    function mapToCapabilities(cfg) {
+      return {
+        recolorables: [
+          {
+            get: () => cfg.background_color || defaultConfig.background_color,
+            set: (v) => { cfg.background_color = v; window.elementSdk.setConfig({ background_color: v }); }
+          },
+          {
+            get: () => cfg.surface_color || defaultConfig.surface_color,
+            set: (v) => { cfg.surface_color = v; window.elementSdk.setConfig({ surface_color: v }); }
+          },
+          {
+            get: () => cfg.text_color || defaultConfig.text_color,
+            set: (v) => { cfg.text_color = v; window.elementSdk.setConfig({ text_color: v }); }
+          },
+          {
+            get: () => cfg.primary_action_color || defaultConfig.primary_action_color,
+            set: (v) => { cfg.primary_action_color = v; window.elementSdk.setConfig({ primary_action_color: v }); }
+          },
+          {
+            get: () => cfg.secondary_action_color || defaultConfig.secondary_action_color,
+            set: (v) => { cfg.secondary_action_color = v; window.elementSdk.setConfig({ secondary_action_color: v }); }
+          }
+        ],
+        borderables: [],
+        fontEditable: {
+          get: () => cfg.font_family || defaultConfig.font_family,
+          set: (v) => { cfg.font_family = v; window.elementSdk.setConfig({ font_family: v }); }
+        },
+        fontSizeable: {
+          get: () => cfg.font_size || defaultConfig.font_size,
+          set: (v) => { cfg.font_size = v; window.elementSdk.setConfig({ font_size: v }); }
+        }
+      };
+    }
+
+    function mapToEditPanelValues(cfg) {
+      return new Map([
+        ["platform_title", cfg.platform_title || defaultConfig.platform_title],
+        ["hero_headline", cfg.hero_headline || defaultConfig.hero_headline],
+        ["hero_subtitle", cfg.hero_subtitle || defaultConfig.hero_subtitle]
+      ]);
+    }
+
+    // Initialize
+    if (window.elementSdk) {
+      window.elementSdk.init({
+        defaultConfig,
+        onConfigChange,
+        mapToCapabilities,
+        mapToEditPanelValues
+      });
+    }
+
+    initDataSdk();
+    onConfigChange(config);
+    switchView('marketplace');
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9c14f376f22a178f',t:'MTc2ODk3ODk5OS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
